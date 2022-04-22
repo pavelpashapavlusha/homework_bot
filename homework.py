@@ -32,7 +32,8 @@ HOMEWORK_STATUSES = {
 
 
 class MessageNotSendExpection(Exception):
-    'Отправка сообщения не удалась'
+    """Отправка сообщения не удалась"""
+
     pass
 
 
