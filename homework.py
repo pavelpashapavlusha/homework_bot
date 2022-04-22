@@ -84,21 +84,18 @@ def check_response(response):
 
 def parse_status(homework):
     """Статус домашней работы."""
-    if 'homework_name' not in homework:
-        error = f'hw not in API response - {homework}'
-        raise KeyError(error)
-    if 'status' not in homework:
-        error = f'status not in API response - {homework}'
-        raise KeyError(error)
-    homework_name = homework.get('homework_name')
-    homework_status = homework.get('status')
-    if homework_status not in HOMEWORK_STATUSES:
-        error = f'Status - {homework_status} of work not in s.l'
-        f'{HOMEWORK_STATUSES}'
-        raise KeyError(error)
-    verdict = HOMEWORK_STATUSES.get(homework_status)
-    logging.info('New status received')
-    return f'Изменился статус проверки работы  "{homework_name}". {verdict}'
+    homework_name = homework['homework_name']
+    if homework_name:
+        homework_status = homework['status']
+        verdict = HOMEWORK_STATUSES.get(homework_status)
+        if verdict:
+            return (f'Изменился статус проверки работы "{homework_name}". '
+                    f'{verdict}')
+        else:
+            logging.error('Недокументированный статус домашней работы')
+            raise Exception
+    logging.error('Нет такого ключа "homework_name"')
+    raise KeyError
 
 
 def check_tokens():
