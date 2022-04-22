@@ -71,7 +71,7 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Возвращает список домашних работ."""
-    if not response['homeworks']:
+    if not all([response['homeworks'], response['current_date']]):
         error = f'отсутствует ключ homeworks в ответе: {response}'
         raise NameError(error)
     homework = response['homeworks']
@@ -103,13 +103,9 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверка переменных окружения."""
-    is_exist = True
-    if (PRACTICUM_TOKEN is None
-            or TELEGRAM_CHAT_ID is None
-            or TELEGRAM_TOKEN is None):
-        logging.critical('Одна или более переменных окружения не определены')
-        is_exist = False
-    return is_exist
+    return all(
+        PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, HEADERS
+    )
 
 
 def main():
