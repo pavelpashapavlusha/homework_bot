@@ -119,33 +119,22 @@ def main():
         logging.error(error, exc_info=True)
         sys.exit()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time() - 30 * 24 * 60 * 60)
     status = ''
     while True:
         try:
+            current_timestamp = int(time.time() - 30 * 24 * 60 * 60)
             response = get_api_answer(current_timestamp)
-        except Exception as error:
-            message = f'Сбой в работе программы: {error}'
-            logging.error(f'Ошибка при запросе к основному API: {error}')
-            time.sleep(RETRY_TIME)
-            continue
-        try:
-            if check_response(response):
-                homework = check_response(response)
-                message = parse_status(homework)
-                if message != status:
-                    send_message(bot, message)
-                    status = message
-            current_timestamp = current_timestamp
-            time.sleep(RETRY_TIME)
-
+            homework = check_response(response)
+            message = parse_status(homework)
+            if message != status:
+                send_message(bot, message)
+                status = message
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             if message != status:
                 send_message(bot, message)
                 status = message
-            logging.error(error, exc_info=True)
-            time.sleep(RETRY_TIME)
+            logging.error(f'Ошибка при запросе к основному API: {error}')
         finally:
             time.sleep(RETRY_TIME)
 
