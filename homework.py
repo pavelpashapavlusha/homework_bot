@@ -104,7 +104,7 @@ def parse_status(homework):
 def check_tokens():
     """Проверка переменных окружения."""
     return all(
-        PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, HEADERS
+        [PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, HEADERS]
     )
 
 
