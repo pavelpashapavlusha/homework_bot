@@ -31,16 +31,21 @@ HOMEWORK_STATUSES = {
 }
 
 
+class MessageNotSendExpection(Exception):
+    'Отправка сообщения не удалась'
+    pass
+
+
 def send_message(bot, message):
     """Отправляет сообщение."""
+    logging.info(f'Новое сообщение {message} готово к отправке')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logging.info(
-            'Бот успешно отправил сообщение '
-            + message + ' в чат ' + TELEGRAM_CHAT_ID
-        )
-    except Exception as error:
-        logging.error(f'сбой при отправке сообщения в Telegram: {error}')
+    except MessageNotSendExpection:
+        error = 'Ошибка при отправке сообщения'
+        raise MessageNotSendExpection(error)
+    else:
+        logging.info(f'Новое сообщение {message} отправлено')
 
 
 def get_api_answer(current_timestamp):
