@@ -80,7 +80,7 @@ def parse_status(homework):
     """Статус домашней работы."""
     homework_name = homework.get('homework_name')
     if homework_name:
-        homework_status = homework.get('status')
+        homework_status = homework['status']
         verdict = HOMEWORK_STATUSES.get(homework_status)
         if verdict:
             return (f'Изменился статус проверки работы "{homework_name}". '
