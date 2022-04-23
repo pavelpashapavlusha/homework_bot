@@ -64,12 +64,6 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Возвращает список домашних работ."""
-    if 'homeworks' not in response:
-        error = f'отсутствует ключ homeworks в ответе: {response}'
-        raise NameError(error)
-    if 'current_date' not in response:
-        error = f'отсутствует ключ current_date в ответе: {response}'
-        raise NameError(error)
     homework = response['homeworks']
     if type(homework) != list:
         error = 'Тип ответа не список'
