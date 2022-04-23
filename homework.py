@@ -8,6 +8,8 @@ import requests
 import telegram
 from dotenv import load_dotenv
 
+from settings import ENDPOINT, HOMEWORK_STATUSES, RETRY_TIME
+
 load_dotenv()
 
 
@@ -19,16 +21,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
     level=logging.INFO)
 
-RETRY_TIME = 600
-ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
-
-
-HOMEWORK_STATUSES = {
-    'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
-    'reviewing': 'Работа взята на проверку ревьюером.',
-    'rejected': 'Работа проверена: у ревьюера есть замечания.'
-}
 
 
 class MessageNotSendExpection(Exception):
@@ -71,12 +64,18 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Возвращает список домашних работ."""
-    if not all([response['homeworks'], response['current_date']]):
+    if 'homeworks' not in response:
         error = f'отсутствует ключ homeworks в ответе: {response}'
         raise NameError(error)
+    if 'current_date' not in response:
+        error = f'отсутствует ключ current_date в ответе: {response}'
+        raise NameError(error)
     homework = response['homeworks']
+    if type(homework) != list:
+        error = 'Тип ответа не список'
+        raise TypeError(error)
     if not homework:
-        error = f'List {homework[0]} is empty'
+        error = 'Список работ пуст'
         raise NameError(error)
     logging.info('Status of homework update')
     return homework[0]
