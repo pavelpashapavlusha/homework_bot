@@ -5,3 +5,6 @@ HOMEWORK_STATUSES = {
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
+THIRTY = 30
+TWENTYFOUR = 24
+SIXTY = 60

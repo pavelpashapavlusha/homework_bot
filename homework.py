@@ -8,26 +8,22 @@ import requests
 import telegram
 from dotenv import load_dotenv
 
-from settings import ENDPOINT, HOMEWORK_STATUSES, RETRY_TIME
+from expection import MessageNotSendExpection
+from settings import (ENDPOINT, HOMEWORK_STATUSES, RETRY_TIME, SIXTY, THIRTY,
+                      TWENTYFOUR)
 
 load_dotenv()
 
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-TELEGRAM_CHAT_ID = 490159936
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
     level=logging.INFO)
 
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
-
-
-class MessageNotSendExpection(Exception):
-    """Отправка сообщения не удалась."""
-
-    pass
 
 
 def send_message(bot, message):
@@ -64,6 +60,9 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Возвращает список домашних работ."""
+    if type(response) != dict:
+        error = 'Тип ответа не словарь'
+        raise TypeError(error)
     homework = response['homeworks']
     if type(homework) != list:
         error = 'Тип ответа не список'
@@ -111,13 +110,12 @@ def main():
     status = ''
     while True:
         try:
-            current_timestamp = int(time.time() - 30 * 24 * 60 * 60)
+            current_timestamp = int(
+                time.time() - THIRTY * TWENTYFOUR * SIXTY * SIXTY
+            )
             response = get_api_answer(current_timestamp)
             homework = check_response(response)
             message = parse_status(homework)
-            if message != status:
-                send_message(bot, message)
-                status = message
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             if message != status:
