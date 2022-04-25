@@ -9,8 +9,7 @@ import telegram
 from dotenv import load_dotenv
 
 from expection import MessageNotSendExpection
-from settings import (ENDPOINT, HOMEWORK_STATUSES, RETRY_TIME, SIXTY, THIRTY,
-                      TWENTYFOUR)
+from settings import (ENDPOINT, HOMEWORK_STATUSES, RETRY_TIME, ONE_MONTH)
 
 load_dotenv()
 
@@ -63,6 +62,9 @@ def check_response(response):
     if type(response) != dict:
         error = 'Тип ответа не словарь'
         raise TypeError(error)
+    if 'homeworks' not in response:
+        error = f'Отсутствует "homeworks" в:{response}'
+        raise TypeError(error)
     homework = response['homeworks']
     if type(homework) != list:
         error = 'Тип ответа не список'
@@ -111,7 +113,7 @@ def main():
     while True:
         try:
             current_timestamp = int(
-                time.time() - THIRTY * TWENTYFOUR * SIXTY * SIXTY
+                time.time() - ONE_MONTH
             )
             response = get_api_answer(current_timestamp)
             homework = check_response(response)
